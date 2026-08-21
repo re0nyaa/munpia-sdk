@@ -1,6 +1,6 @@
 {
     "name": "munpia-sdk",
-    "version": "1.0.1",
+    "version": "1.0.11",
     "description": "문피아(Munpia) 비공식 TypeScript API 클라이언트",
     "type": "module",
     "main": "./dist/src/index.js",
@@ -51,7 +51,11 @@
             "require": "./dist/src/parser.js"
         }
     },
+    "files": [
+        "dist"
+    ],
     "scripts": {
+        "prepublishOnly": "pnpm build",
         "start": "node --import tsx src/index.ts",
         "build": "pnpm test && tsc -p tsconfig.build.json",
         "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.cjs"
