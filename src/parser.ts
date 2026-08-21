@@ -1,13 +1,13 @@
-import { MunpiaClient } from './client.js'
-import { MunpiaNotFoundError, MunpiaValidationError } from './errors.js'
+import { MunpiaClient } from "./client.js"
+import { MunpiaNotFoundError, MunpiaValidationError } from "./errors.js"
 import {
     ChapterItem,
     MunpiaParserOptions,
     NovelDetailInfo,
     NovelMatchResult,
     NovelSearchResultItem,
-    RankingNovelItem
-} from './types.js'
+    RankingNovelItem,
+} from "./types.js"
 
 export class MunpiaParser {
     private client: MunpiaClient
@@ -21,7 +21,7 @@ export class MunpiaParser {
                 cacheTtlMs: options.cacheTtlMs ?? 60000,
                 timeout: options.timeout ?? 10000,
                 maxRetries: options.maxRetries ?? 3,
-                poolOptions: options.poolOptions
+                poolOptions: options.poolOptions,
             })
         }
     }
@@ -30,29 +30,55 @@ export class MunpiaParser {
         return this.client
     }
 
-    async search(keyword: string, limit: number = 10): Promise<NovelSearchResultItem[]> {
+    async search(
+        keyword: string,
+        limit: number = 10,
+    ): Promise<NovelSearchResultItem[]> {
         if (!keyword || !keyword.trim()) {
-            throw new MunpiaValidationError('검색 키워드는 필수 값입니다.', 'keyword')
+            throw new MunpiaValidationError(
+                "검색 키워드는 필수 값입니다.",
+                "keyword",
+            )
         }
-        const res = await this.client.search({ keyword: keyword.trim(), page: 1, size: limit })
+        const res = await this.client.search({
+            keyword: keyword.trim(),
+            page: 1,
+            size: limit,
+        })
         return res.items
     }
 
-    async getNovelByName(name: string, fetchChapters: boolean = true): Promise<NovelMatchResult> {
+    async getNovelByName(
+        name: string,
+        fetchChapters: boolean = true,
+    ): Promise<NovelMatchResult> {
         if (!name || !name.trim()) {
-            throw new MunpiaValidationError('작품 이름은 필수 값입니다.', 'name')
+            throw new MunpiaValidationError(
+                "작품 이름은 필수 값입니다.",
+                "name",
+            )
         }
 
-        const trimmedName = name.trim().replace(/\s+/g, '')
-        const searchRes = await this.client.search({ keyword: name.trim(), page: 1, size: 5 })
+        const trimmedName = name.trim().replace(/\s+/g, "")
+        const searchRes = await this.client.search({
+            keyword: name.trim(),
+            page: 1,
+            size: 5,
+        })
 
         if (!searchRes.items || searchRes.items.length === 0) {
-            throw new MunpiaNotFoundError(`'${name}' 작품을 검색 결과에서 찾을 수 없습니다.`)
+            throw new MunpiaNotFoundError(
+                `'${name}' 작품을 검색 결과에서 찾을 수 없습니다.`,
+            )
         }
 
-        let matched = searchRes.items.find(item => item.title.replace(/\s+/g, '') === trimmedName)
+        let matched = searchRes.items.find(
+            (item) => item.title.replace(/\s+/g, "") === trimmedName,
+        )
         if (!matched) {
-            matched = searchRes.items.find(item => item.title.replace(/\s+/g, '').includes(trimmedName))
+            matched = searchRes.items.find((item) =>
+                item.title.replace(/\s+/g, "").includes(trimmedName),
+            )
         }
         if (!matched) {
             matched = searchRes.items[0]
@@ -69,25 +95,31 @@ export class MunpiaParser {
         return {
             matchedItem: matched,
             detail,
-            chapters
+            chapters,
         }
     }
 
-    async getTopRankingSummary(limit: number = 10): Promise<RankingNovelItem[]> {
+    async getTopRankingSummary(
+        limit: number = 10,
+    ): Promise<RankingNovelItem[]> {
         const top100 = await this.client.getTop100()
         return top100.slice(0, limit)
     }
 
-    async getNovelWithChapters(novelId: number | string): Promise<{ detail: NovelDetailInfo; chapters: ChapterItem[]; totalChapters: number }> {
+    async getNovelWithChapters(novelId: number | string): Promise<{
+        detail: NovelDetailInfo
+        chapters: ChapterItem[]
+        totalChapters: number
+    }> {
         const [detail, chaptersRes] = await Promise.all([
             this.client.getNovelDetail(novelId),
-            this.client.getChapters(novelId)
+            this.client.getChapters(novelId),
         ])
 
         return {
             detail,
             chapters: chaptersRes.chapters,
-            totalChapters: chaptersRes.total
+            totalChapters: chaptersRes.total,
         }
     }
 }

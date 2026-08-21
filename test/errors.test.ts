@@ -18,7 +18,13 @@ describe("Munpia SDK 에러 클래스 단위 테스트", () => {
     })
 
     test("MunpiaApiError 상태 코드 및 에러 코드 포맷 검증", () => {
-        const error = new MunpiaApiError("잘못된 요청", 400, "INVALID_PARAM", { detail: "fail" }, "https://api.munpia.com")
+        const error = new MunpiaApiError(
+            "잘못된 요청",
+            400,
+            "INVALID_PARAM",
+            { detail: "fail" },
+            "https://api.munpia.com",
+        )
         expect(error).toBeInstanceOf(MunpiaError)
         expect(error.name).toBe("MunpiaApiError")
         expect(error.status).toBe(400)
@@ -30,7 +36,11 @@ describe("Munpia SDK 에러 클래스 단위 테스트", () => {
 
     test("MunpiaNetworkError 원인 에러 및 URL 보존 검증", () => {
         const cause = new Error("ECONNRESET")
-        const error = new MunpiaNetworkError("네트워크 실패", cause, "https://api.munpia.com")
+        const error = new MunpiaNetworkError(
+            "네트워크 실패",
+            cause,
+            "https://api.munpia.com",
+        )
         expect(error).toBeInstanceOf(MunpiaError)
         expect(error.name).toBe("MunpiaNetworkError")
         expect(error.causeError).toBe(cause)
@@ -38,14 +48,22 @@ describe("Munpia SDK 에러 클래스 단위 테스트", () => {
     })
 
     test("MunpiaTimeoutError 타임아웃 시간 보존 검증", () => {
-        const error = new MunpiaTimeoutError("요청 시간 초과", 3000, "https://api.munpia.com")
+        const error = new MunpiaTimeoutError(
+            "요청 시간 초과",
+            3000,
+            "https://api.munpia.com",
+        )
         expect(error).toBeInstanceOf(MunpiaError)
         expect(error.name).toBe("MunpiaTimeoutError")
         expect(error.timeoutMs).toBe(3000)
     })
 
     test("MunpiaRateLimitError retryAfterMs 보존 검증", () => {
-        const error = new MunpiaRateLimitError("호출 한도 초과", 5000, "https://api.munpia.com")
+        const error = new MunpiaRateLimitError(
+            "호출 한도 초과",
+            5000,
+            "https://api.munpia.com",
+        )
         expect(error).toBeInstanceOf(MunpiaError)
         expect(error.name).toBe("MunpiaRateLimitError")
         expect(error.retryAfterMs).toBe(5000)
@@ -59,7 +77,11 @@ describe("Munpia SDK 에러 클래스 단위 테스트", () => {
     })
 
     test("MunpiaNotFoundError 리소스 ID 보존 검증", () => {
-        const error = new MunpiaNotFoundError("소설을 찾을 수 없습니다", "12345", "https://api.munpia.com/novels/12345")
+        const error = new MunpiaNotFoundError(
+            "소설을 찾을 수 없습니다",
+            "12345",
+            "https://api.munpia.com/novels/12345",
+        )
         expect(error).toBeInstanceOf(MunpiaError)
         expect(error.name).toBe("MunpiaNotFoundError")
         expect(error.resourceId).toBe("12345")

@@ -1,5 +1,10 @@
-import { MunpiaApiError, MunpiaNetworkError, MunpiaRateLimitError, MunpiaTimeoutError } from './errors.js'
-import { Logger, RetryInterceptorContext } from './types.js'
+import {
+    MunpiaApiError,
+    MunpiaNetworkError,
+    MunpiaRateLimitError,
+    MunpiaTimeoutError,
+} from "./errors.js"
+import { Logger, RetryInterceptorContext } from "./types.js"
 
 export interface RetryConfig {
     maxRetries: number
@@ -10,8 +15,15 @@ export interface RetryConfig {
     url?: string
 }
 
-export function calculateFullJitter(attempt: number, baseDelayMs: number, maxDelayMs: number): number {
-    const exponentialDelay = Math.min(maxDelayMs, baseDelayMs * Math.pow(2, attempt))
+export function calculateFullJitter(
+    attempt: number,
+    baseDelayMs: number,
+    maxDelayMs: number,
+): number {
+    const exponentialDelay = Math.min(
+        maxDelayMs,
+        baseDelayMs * Math.pow(2, attempt),
+    )
     return Math.floor(Math.random() * (exponentialDelay + 1))
 }
 
@@ -20,7 +32,10 @@ export function isRetryableError(error: unknown): boolean {
         return true
     }
 
-    if (error instanceof MunpiaTimeoutError || error instanceof MunpiaNetworkError) {
+    if (
+        error instanceof MunpiaTimeoutError ||
+        error instanceof MunpiaNetworkError
+    ) {
         return true
     }
 
@@ -31,19 +46,22 @@ export function isRetryableError(error: unknown): boolean {
     if (error instanceof Error) {
         const message = error.message.toLowerCase()
         return (
-            message.includes('econnreset') ||
-            message.includes('etimedout') ||
-            message.includes('fetch failed') ||
-            message.includes('network') ||
-            message.includes('socket')
+            message.includes("econnreset") ||
+            message.includes("etimedout") ||
+            message.includes("fetch failed") ||
+            message.includes("network") ||
+            message.includes("socket")
         )
     }
 
     return false
 }
 
-export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> {
-    let lastError: Error = new Error('Unknown retry error')
+export async function withRetry<T>(
+    fn: () => Promise<T>,
+    config: RetryConfig,
+): Promise<T> {
+    let lastError: Error = new Error("Unknown retry error")
 
     for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
         try {
@@ -55,27 +73,35 @@ export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig): P
                 throw lastError
             }
 
-            let delayMs = calculateFullJitter(attempt, config.baseDelayMs, config.maxDelayMs)
+            let delayMs = calculateFullJitter(
+                attempt,
+                config.baseDelayMs,
+                config.maxDelayMs,
+            )
 
-            if (lastError instanceof MunpiaRateLimitError && lastError.retryAfterMs) {
+            if (
+                lastError instanceof MunpiaRateLimitError &&
+                lastError.retryAfterMs
+            ) {
                 delayMs = Math.max(delayMs, lastError.retryAfterMs)
             }
 
-            config.logger?.warn(`[재시도 ${attempt + 1}/${config.maxRetries}] ${config.url || 'API 요청'} ${delayMs}ms 후 재시도 (${lastError.message})`)
+            config.logger?.warn(
+                `[재시도 ${attempt + 1}/${config.maxRetries}] ${config.url || "API 요청"} ${delayMs}ms 후 재시도 (${lastError.message})`,
+            )
 
             if (config.onRetry) {
                 try {
                     await config.onRetry({
-                        url: config.url || '',
+                        url: config.url || "",
                         error: lastError,
                         attempt: attempt + 1,
-                        delayMs
+                        delayMs,
                     })
-                } catch {
-                }
+                } catch {}
             }
 
-            await new Promise(resolve => setTimeout(resolve, delayMs))
+            await new Promise((resolve) => setTimeout(resolve, delayMs))
         }
     }
 
