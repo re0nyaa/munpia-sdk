@@ -1,0 +1,10 @@
+src/
+test/
+examples/
+tsconfig.json
+tsconfig.build.json
+jest.config.cjs
+.gitignore
+.npmrc
+.github/
+*.log
