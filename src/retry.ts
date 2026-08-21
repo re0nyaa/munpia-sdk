@@ -10,17 +10,11 @@ export interface RetryConfig {
     url?: string
 }
 
-/**
- * 지수 백오프 Full Jitter 딜레이 계산 (ms)
- */
 export function calculateFullJitter(attempt: number, baseDelayMs: number, maxDelayMs: number): number {
     const exponentialDelay = Math.min(maxDelayMs, baseDelayMs * Math.pow(2, attempt))
     return Math.floor(Math.random() * (exponentialDelay + 1))
 }
 
-/**
- * 재시도 가능한 에러인지 확인
- */
 export function isRetryableError(error: unknown): boolean {
     if (error instanceof MunpiaRateLimitError) {
         return true
@@ -48,9 +42,6 @@ export function isRetryableError(error: unknown): boolean {
     return false
 }
 
-/**
- * 재시도 래퍼 함수
- */
 export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig): Promise<T> {
     let lastError: Error = new Error('Unknown retry error')
 
@@ -81,7 +72,6 @@ export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig): P
                         delayMs
                     })
                 } catch {
-                    // 인터셉터 에러 무시
                 }
             }
 

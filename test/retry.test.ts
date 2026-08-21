@@ -30,7 +30,6 @@ describe("retry 유틸리티 단위 테스트", () => {
     })
 
     test("isRetryableError 판별 로직 검증", () => {
-        // 재시도 대상 에러
         expect(isRetryableError(new MunpiaRateLimitError("제한", 100))).toBe(
             true,
         )
@@ -54,7 +53,6 @@ describe("retry 유틸리티 단위 테스트", () => {
         expect(isRetryableError(new Error("fetch failed"))).toBe(true)
         expect(isRetryableError(new Error("socket hang up"))).toBe(true)
 
-        // 재시도 비대상 에러
         expect(isRetryableError(new MunpiaValidationError("필수값 누락"))).toBe(
             false,
         )
@@ -136,6 +134,6 @@ describe("retry 유틸리티 단위 테스트", () => {
             }),
         ).rejects.toThrow(MunpiaTimeoutError)
 
-        expect(fn).toHaveBeenCalledTimes(3) // 초회 + 재시도 2회
+        expect(fn).toHaveBeenCalledTimes(3)
     })
 })

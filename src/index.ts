@@ -11,9 +11,6 @@ import { NovelSearchResultItem, RankingNovelItem } from "./types.js"
 
 export default MunpiaClient
 
-/**
- * Munpia SDK 엔터프라이즈 동작 데모 함수
- */
 async function runEnterpriseDemo() {
     console.log(
         "======================================================================",
@@ -26,7 +23,6 @@ async function runEnterpriseDemo() {
         "======================================================================\n",
     )
 
-    // 1. 클라이언트 초기화 (커넥션 풀 128, LRU 캐시, 재시도 3회, 타임아웃 8초)
     const client = new MunpiaClient({
         cache: true,
         cacheTtlMs: 30000,
@@ -41,7 +37,6 @@ async function runEnterpriseDemo() {
 
     const parser = new MunpiaParser({ client })
 
-    // 2. 실시간 TOP 100 랭킹 조회 (1차: 네트워크 요청 -> 2차: 캐시 히트 테스트)
     console.log("[1] 실시간 TOP 100 랭킹 조회 및 캐시 레이턴시 테스트...")
     const t0 = Date.now()
     const top100Novels = await client.getTop100()
@@ -67,7 +62,6 @@ async function runEnterpriseDemo() {
         console.log("")
     }
 
-    // 3. 고성능 파서 헬퍼: 작품 이름 자동 매칭 상세 정보 조회
     const targetTitle = "전지적 독자 시점"
     console.log(`[2] 작품명 자동 매칭 상세 조회 (작품명: "${targetTitle}")...`)
     const matchRes = await parser.getNovelByName(targetTitle)
@@ -83,7 +77,6 @@ async function runEnterpriseDemo() {
     }
     console.log("")
 
-    // 4. 비동기 제너레이터 스트리밍 테스트
     console.log("[3] 비동기 제너레이터 스트리밍 테스트 (searchStream)...")
     let streamCount = 0
     for await (const novel of client.searchStream({
@@ -99,7 +92,6 @@ async function runEnterpriseDemo() {
     }
     console.log("")
 
-    // 5. 캐시 메트릭 통계 확인
     const stats = client.getCacheStats()
     if (stats) {
         console.log("[4] 엔터프라이즈 캐시 메트릭 통계:")
@@ -121,7 +113,6 @@ async function runEnterpriseDemo() {
     )
 }
 
-// 직접 실행된 경우 데모 실행
 if (
     process.argv[1] &&
     (process.argv[1].endsWith("index.ts") ||

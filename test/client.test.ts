@@ -11,7 +11,7 @@ describe("MunpiaClient 단위 테스트", () => {
         })
 
         expect(client).toBeDefined()
-        expect(client.getCacheStats()).toBeUndefined() // 기본 설정에서는 cacheStore가 undefined
+        expect(client.getCacheStats()).toBeUndefined()
     })
 
     test("캐시 스토어 설정 및 캐시 통계 확인", () => {
@@ -52,7 +52,6 @@ describe("MunpiaClient 단위 테스트", () => {
     test("searchStream 비동기 이터레이터 동작 검증", async () => {
         const client = new MunpiaClient()
 
-        // search 메서드를 mocking하여 2페이지 후 종료되도록 설정
         const searchSpy = jest
             .spyOn(client, "search")
             .mockImplementation(async (options) => {
@@ -91,7 +90,7 @@ describe("MunpiaClient 단위 테스트", () => {
         expect(collectedItems).toHaveLength(2)
         expect(collectedItems[0].title).toBe("소설 1")
         expect(collectedItems[1].title).toBe("소설 2")
-        expect(searchSpy).toHaveBeenCalledTimes(2) // 1페이지, 2페이지(hasNext: false로 종료)
+        expect(searchSpy).toHaveBeenCalledTimes(2)
 
         searchSpy.mockRestore()
     })

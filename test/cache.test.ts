@@ -39,17 +39,17 @@ describe("MemoryTtlCache 단위 테스트", () => {
         cache.set("a", 1)
         cache.set("b", 2)
 
-        expect(cache.get("a")).toBe(1) // a 접근 -> b가 가장 오래된 키
+        expect(cache.get("a")).toBe(1)
 
-        cache.set("c", 3) // maxEntries 초과 -> b eviction
+        cache.set("c", 3)
 
         expect(cache.get("b")).toBeUndefined()
         expect(cache.get("a")).toBe(1)
         expect(cache.get("c")).toBe(3)
 
         const stats = cache.getStats()
-        expect(stats.hits).toBe(3) // get('a'), get('a'), get('c')
-        expect(stats.misses).toBe(1) // get('b')
+        expect(stats.hits).toBe(3)
+        expect(stats.misses).toBe(1)
         expect(stats.evictions).toBe(1)
         expect(stats.hitRatio).toBeGreaterThan(0)
         expect(stats.size).toBe(2)

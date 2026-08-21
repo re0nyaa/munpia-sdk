@@ -1,6 +1,3 @@
-/**
- * Munpia SDK 기본 에러 클래스
- */
 export class MunpiaError extends Error {
     constructor(message: string) {
         super(message)
@@ -9,9 +6,6 @@ export class MunpiaError extends Error {
     }
 }
 
-/**
- * Munpia API 에러 클래스 (HTTP 응답 코드 또는 API 응답 code 오류)
- */
 export class MunpiaApiError extends MunpiaError {
     readonly status: number
     readonly errorCode?: string | number
@@ -36,9 +30,6 @@ export class MunpiaApiError extends MunpiaError {
     }
 }
 
-/**
- * 네트워크 연결 오류 에러 클래스
- */
 export class MunpiaNetworkError extends MunpiaError {
     readonly causeError?: Error
     readonly url?: string
@@ -51,9 +42,6 @@ export class MunpiaNetworkError extends MunpiaError {
     }
 }
 
-/**
- * 요청 타임아웃 에러 클래스
- */
 export class MunpiaTimeoutError extends MunpiaError {
     readonly timeoutMs: number
     readonly url?: string
@@ -66,9 +54,6 @@ export class MunpiaTimeoutError extends MunpiaError {
     }
 }
 
-/**
- * Rate Limit / 요청 제한 에러 클래스
- */
 export class MunpiaRateLimitError extends MunpiaError {
     readonly retryAfterMs?: number
     readonly url?: string
@@ -81,9 +66,6 @@ export class MunpiaRateLimitError extends MunpiaError {
     }
 }
 
-/**
- * 파라미터 유효성 검증 실패 에러 클래스
- */
 export class MunpiaValidationError extends MunpiaError {
     readonly field?: string
 
@@ -94,9 +76,6 @@ export class MunpiaValidationError extends MunpiaError {
     }
 }
 
-/**
- * 리소스를 찾을 수 없음 (404) 에러 클래스
- */
 export class MunpiaNotFoundError extends MunpiaError {
     readonly resourceId?: string | number
     readonly url?: string

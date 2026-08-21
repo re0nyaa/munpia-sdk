@@ -10,9 +10,6 @@ export interface MemoryTtlCacheOptions {
     maxEntries?: number
 }
 
-/**
- * 엔터프라이즈급 LRU + TTL 기반 인메모리 캐시 구현체
- */
 export class MemoryTtlCache implements CacheStore {
     private store: Map<string, CacheEntry<any>>
     private defaultTtlMs: number
@@ -40,7 +37,6 @@ export class MemoryTtlCache implements CacheStore {
             return undefined
         }
 
-        // LRU 갱신: 재삽입하여 가장 최근 항목으로 이동
         this.store.delete(key)
         this.store.set(key, entry)
         this.hits++
@@ -55,7 +51,6 @@ export class MemoryTtlCache implements CacheStore {
         if (this.store.has(key)) {
             this.store.delete(key)
         } else if (this.store.size >= this.maxEntries) {
-            // 가장 오래된 첫 번째 키 방출 (Eviction)
             const oldestKey = this.store.keys().next().value
             if (oldestKey) {
                 this.store.delete(oldestKey)
@@ -82,9 +77,6 @@ export class MemoryTtlCache implements CacheStore {
         return this.store.size
     }
 
-    /**
-     * 캐시 성능 메트릭 통계 조회
-     */
     getStats(): CacheStats {
         const total = this.hits + this.misses
         const hitRatio = total > 0 ? Number((this.hits / total).toFixed(4)) : 0

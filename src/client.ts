@@ -42,9 +42,6 @@ export interface RequestOptions {
     signal?: AbortSignal
 }
 
-/**
- * 문피아 엔터프라이즈 TypeScript API 클라이언트
- */
 export class MunpiaClient {
     private baseUrl: string
     private userAgent: string
@@ -78,7 +75,6 @@ export class MunpiaClient {
             this.cacheStore = options.cache
         }
 
-        // 엔터프라이즈 커넥션 풀 (Undici Agent) 초기화
         const pool = options.poolOptions || {}
         this.dispatcher = new Agent({
             connections: pool.connections ?? 128,
@@ -91,9 +87,6 @@ export class MunpiaClient {
         })
     }
 
-    /**
-     * 기본 HTTP 요청 핸들러 (커넥션 풀 및 레이턴시 추적)
-     */
     async request<T = any>(
         endpoint: string,
         method: "GET" | "POST" = "GET",
@@ -123,7 +116,6 @@ export class MunpiaClient {
 
         const cacheKey = `${method}:${fullUrl}`
 
-        // 캐시 조회
         if (method === "GET" && !options.skipCache && this.cacheStore) {
             const cached = this.cacheStore.get<T>(cacheKey)
             if (cached !== undefined) {
@@ -310,9 +302,6 @@ export class MunpiaClient {
         })
     }
 
-    /**
-     * 작품 검색
-     */
     async search(
         options: SearchOptions,
         requestOptions?: RequestOptions,
@@ -343,9 +332,6 @@ export class MunpiaClient {
         }
     }
 
-    /**
-     * 검색 결과를 비동기 이터레이터로 순회
-     */
     async *searchStream(
         options: SearchStreamOptions,
         requestOptions?: RequestOptions,
@@ -382,9 +368,6 @@ export class MunpiaClient {
         }
     }
 
-    /**
-     * 검색어 자동완성
-     */
     async getAutoComplete(
         keyword: string,
         requestOptions?: RequestOptions,
@@ -403,9 +386,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 인기 검색어 / 실시간 검색 순위
-     */
     async getLeaderboard(
         requestOptions?: RequestOptions,
     ): Promise<LeaderboardResult> {
@@ -417,9 +397,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 전체 장르 목록 조회
-     */
     async getGenres(requestOptions?: RequestOptions): Promise<GenreItem[]> {
         return this.request<GenreItem[]>(
             "/api/v1/main/genres",
@@ -429,9 +406,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 종합 실시간 TOP 100 랭킹 조회
-     */
     async getTop100(
         requestOptions?: RequestOptions,
     ): Promise<RankingNovelItem[]> {
@@ -447,9 +421,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 월간 랭킹 조회
-     */
     async getMonthlyRanking(
         requestOptions?: RequestOptions,
     ): Promise<RankingNovelItem[]> {
@@ -465,9 +436,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 코믹 TOP 20 랭킹 조회
-     */
     async getComicTop20(requestOptions?: RequestOptions): Promise<any> {
         return this.request(
             "/api/v1/main/mobile-ranking/comic/top20",
@@ -477,9 +445,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 최근 유료 전환 작품 목록
-     */
     async getRecentPaidConversion(
         requestOptions?: RequestOptions,
     ): Promise<any> {
@@ -491,9 +456,6 @@ export class MunpiaClient {
         )
     }
 
-    /**
-     * 작품 상세 메타데이터 조회
-     */
     async getNovelDetail(
         novelId: number | string,
         requestOptions?: RequestOptions,
@@ -513,9 +475,6 @@ export class MunpiaClient {
         return res?.novelInfo || res
     }
 
-    /**
-     * 작품 회차 메타데이터 목록 조회 (본문 content 제외)
-     */
     async getChapters(
         novelId: number | string,
         requestOptions?: RequestOptions,
@@ -556,18 +515,12 @@ export class MunpiaClient {
         }
     }
 
-    /**
-     * 캐시 통계 메트릭 조회
-     */
     getCacheStats(): CacheStats | undefined {
         return this.cacheStore?.getStats
             ? this.cacheStore.getStats()
             : undefined
     }
 
-    /**
-     * 커넥션 풀 종료 및 리소스 정리
-     */
     async close(): Promise<void> {
         await this.dispatcher.close()
     }
