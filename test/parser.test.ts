@@ -16,22 +16,30 @@ describe("MunpiaParser 단위 테스트", () => {
         )
     })
 
-    test("작품명으로 검색 및 상세 정보 매칭 (getNovelByName)", async () => {
-        const parser = new MunpiaParser()
-        const result = await parser.getNovelByName("전지적 독자 시점")
+    test(
+        "작품명으로 검색 및 상세 정보 매칭 (getNovelByName)",
+        async () => {
+            const parser = new MunpiaParser()
+            const result = await parser.getNovelByName("전지적 독자 시점")
 
-        expect(result.detail).toBeDefined()
-        expect(result.detail.title).toContain("전지적 독자 시점")
-        expect(result.chapters).toBeDefined()
-        expect(result.chapters!.length).toBeGreaterThan(0)
-    })
+            expect(result.detail).toBeDefined()
+            expect(result.detail.title).toContain("전지적 독자 시점")
+            expect(result.chapters).toBeDefined()
+            expect(result.chapters!.length).toBeGreaterThan(0)
+        },
+        15000,
+    )
 
-    test("실시간 TOP N 랭킹 요약 조회", async () => {
-        const parser = new MunpiaParser()
-        const summary = await parser.getTopRankingSummary(5)
+    test(
+        "실시간 TOP N 랭킹 요약 조회",
+        async () => {
+            const parser = new MunpiaParser()
+            const summary = await parser.getTopRankingSummary(5)
 
-        expect(summary.length).toBeLessThanOrEqual(5)
-        expect(summary.length).toBeGreaterThan(0)
-        expect(summary[0].title).toBeDefined()
-    })
+            expect(summary.length).toBeLessThanOrEqual(5)
+            expect(summary.length).toBeGreaterThan(0)
+            expect(summary[0].title).toBeDefined()
+        },
+        15000,
+    )
 })

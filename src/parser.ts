@@ -9,9 +9,15 @@ import {
     RankingNovelItem,
 } from "./types.js"
 
+/**
+ * 고수준 문피아 파서 및 헬퍼 유틸리티 클래스
+ */
 export class MunpiaParser {
     private client: MunpiaClient
 
+    /**
+     * @param options 파서 옵션 또는 기존 MunpiaClient 인스턴스
+     */
     constructor(options: MunpiaParserOptions = {}) {
         if (options.client instanceof MunpiaClient) {
             this.client = options.client
@@ -26,10 +32,21 @@ export class MunpiaParser {
         }
     }
 
+    /**
+     * 내부 MunpiaClient 인스턴스 반환
+     * @returns MunpiaClient 인스턴스
+     */
     getClient(): MunpiaClient {
         return this.client
     }
 
+    /**
+     * 키워드로 빠른 소설 검색 결과 목록 반환
+     * @param keyword 검색 키워드
+     * @param limit 반환할 최대 결과 수 (기본값: 10)
+     * @returns 검색된 소설 아이템 배열
+     * @throws {MunpiaValidationError} 키워드가 비어있는 경우
+     */
     async search(
         keyword: string,
         limit: number = 10,
@@ -48,6 +65,14 @@ export class MunpiaParser {
         return res.items
     }
 
+    /**
+     * 작품명으로 검색하여 가장 정확히 일치하는 작품 상세 및 최근 회차 목록 반환
+     * @param name 작품 제목
+     * @param fetchChapters 회차 목록 함께 조회 여부 (기본값: true)
+     * @returns 일치된 작품 검색 아이템, 상세 메타데이터 및 회차 목록
+     * @throws {MunpiaValidationError} 작품명이 비어있는 경우
+     * @throws {MunpiaNotFoundError} 검색 결과가 없는 경우
+     */
     async getNovelByName(
         name: string,
         fetchChapters: boolean = true,
@@ -99,6 +124,11 @@ export class MunpiaParser {
         }
     }
 
+    /**
+     * 실시간 TOP N 랭킹 요약 목록 반환
+     * @param limit 반환할 최대 랭킹 수 (기본값: 10)
+     * @returns 상위 N개 랭킹 소설 목록
+     */
     async getTopRankingSummary(
         limit: number = 10,
     ): Promise<RankingNovelItem[]> {
@@ -106,6 +136,12 @@ export class MunpiaParser {
         return top100.slice(0, limit)
     }
 
+    /**
+     * 작품 ID로 상세 정보 및 회차 메타데이터 일괄 병렬 조회
+     * @param novelId 소설 ID
+     * @returns 상세 메타데이터, 회차 배열, 총 회차 수
+     * @throws {MunpiaValidationError} novelId가 누락된 경우
+     */
     async getNovelWithChapters(novelId: number | string): Promise<{
         detail: NovelDetailInfo
         chapters: ChapterItem[]

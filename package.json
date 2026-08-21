@@ -1,6 +1,6 @@
 {
     "name": "munpia-sdk",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "문피아(Munpia) 비공식 TypeScript API 클라이언트",
     "type": "module",
     "main": "./dist/src/index.js",

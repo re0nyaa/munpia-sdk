@@ -11,6 +11,9 @@ import { NovelSearchResultItem, RankingNovelItem } from "./types.js"
 
 export default MunpiaClient
 
+/**
+ * Munpia SDK 엔터프라이즈 동작 데모 및 검증 함수
+ */
 async function runEnterpriseDemo() {
     console.log(
         "======================================================================",
